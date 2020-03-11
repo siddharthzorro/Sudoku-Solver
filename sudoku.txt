@@ -1,0 +1,82 @@
+#include<iostream>
+#include<vector>
+using namespace std;
+
+int row[9]={0};
+int col[9]={0};
+int matrix[3][3]={0};
+
+void sudoku04(vector<vector<int>> grid,int vidx,vector<int> calls,int i)
+{
+    if(vidx==calls.size()||i>9)
+    {
+       if(vidx==calls.size())
+       {
+       for(int i=0;i<grid.size();++i)
+       {
+           for(int j=0;j<grid[0].size();++j)
+           {
+               cout<<grid[i][j]<<" ";
+           }
+           cout<<endl;
+       }
+       cout<<endl;
+       }
+       return;
+    }
+    int x=calls[vidx]/grid.size();
+    int y=calls[vidx]%grid[0].size();
+    
+      int mask=1<<i;
+
+      if(((row[x] & mask)==0) && ((col[y] & mask)==0) && ((matrix[x/3][y/3] & mask)==0)) 
+      {
+          grid[x][y]=i;
+          row[x]^=mask;
+          col[y]^=mask;
+          matrix[x/3][y/3]^=mask;
+          sudoku04(grid,vidx+1,calls,1);
+          row[x]^=mask;
+          col[y]^=mask;
+          matrix[x/3][y/3]^=mask;
+          grid[x][y]=0;
+
+      }
+      sudoku04(grid,vidx,calls,i+1);
+}
+main()
+{ 
+vector<vector<int>> grid={{3, 0, 6, 5, 0, 8, 4, 0, 0},  
+                      {5, 2, 0, 0, 0, 0, 0, 0, 0},  
+                      {0, 8, 7, 0, 0, 0, 0, 3, 1},  
+                      {0, 0, 3, 0, 1, 0, 0, 8, 0},  
+                      {9, 0, 0, 8, 6, 3, 0, 0, 5},  
+                      {0, 5, 0, 0, 9, 0, 6, 0, 0},  
+                      {1, 3, 0, 0, 0, 0, 2, 5, 0},  
+                      {0, 0, 0, 0, 0, 0, 0, 7, 4},  
+                      {0, 0, 5, 2, 0, 6, 3, 0, 0}};  
+    
+    vector<int> calls;
+    int num,mask=0;
+    for(int i=0;i<grid.size();++i)
+    {
+      for(int j=0;j<grid[0].size();++j)
+      {
+        if(grid[i][j]==0)
+        {
+         num=i*9+j;
+         calls.push_back(num);
+        }
+        else
+        {
+          mask=1<<grid[i][j];
+          row[i]|=mask;
+          col[j]|=mask;
+          matrix[i/3][j/3]|=mask;
+        }
+        
+      }
+    }
+ 
+    sudoku04(grid,0,calls,1);  //mask to reduce space
+}
